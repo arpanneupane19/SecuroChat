@@ -1,11 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './Form.css'
 import { MessageTwoTone, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Form, Input, Button } from 'antd';
 import 'antd/dist/antd.css';
 import { Link } from 'react-router-dom';
+import { io } from 'socket.io-client'
+
+const socket = io('http://127.0.0.1:5000');
+
 
 function Home() {
+    const [name, setName] = useState('');
+    const [code, setCode] = useState('');
+
     return (
         <div className='container'>
             <div className='header'>
@@ -32,6 +39,7 @@ function Home() {
                         ]}
                     >
                         <Input
+                            onChange={(e) => setName(e.target.value)}
                             prefix={
                                 <UserOutlined
                                     className="site-form-item-icon"
@@ -51,6 +59,7 @@ function Home() {
                         ]}
                     >
                         <Input
+                            onChange={(e) => setCode(e.target.value)}
                             prefix={
                                 <LockOutlined
                                     className="site-form-item-icon"
@@ -63,7 +72,7 @@ function Home() {
                     <Form.Item
                         style={{ width: '75%', marginLeft: 'auto', marginRight: 'auto', marginTop: '8px' }}
                     >
-                        <Button style={{ width: '100%', borderRadius: '7.5px' }} type="primary" htmlType="submit">
+                        <Button style={{ width: '100%', borderRadius: '7.5px' }} type="primary" htmlType="submit" onClick={() => socket.emit('createRoom', { user: name, code: code })}>
                             Create Room
                         </Button>
                     </Form.Item>
