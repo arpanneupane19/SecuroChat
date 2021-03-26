@@ -1,20 +1,21 @@
 const express = require('express');
 const path = require('path');
-const socketIO = require('socket.io');
-const http = require('http');
-
-
-// App setup
 const app = express();
+const httpServer = require('http').createServer(app);
+const io = require("socket.io")(httpServer, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"]
+    }
+});
 
-const PORT = process.env.PORT || 5000;
-const server = http.createServer(app);
-const io = socketIO(server);
+io.on('connection', (socket) => {
+    console.log(socket.id)
 
-
-io.on('connection', socket => {
-    console.log(`Made connection successfully. ${socket.id}`);
+    socket.on('createRoom', (data) => {
+        console.log(`${data.user} is trying to join room ${data.code}`)
+    })
 })
 
-
-server.listen(PORT, () => console.log(`Listening on port ${PORT}`))
+const PORT = process.env.PORT || 5000;
+httpServer.listen(PORT, () => console.log(`Server listening on port ${PORT}`))
