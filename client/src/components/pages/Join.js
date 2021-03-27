@@ -70,7 +70,7 @@ function Join() {
                 </Form>
                 <div className='link'>
                     Need to create a room? Click <Link to='/create'>here</Link>.
-                        </div>
+                </div>
             </div>
         </div >
     )

@@ -1,7 +1,9 @@
 import React from 'react'
 import Home from './components/pages/Home';
 import Join from './components/pages/Join';
+import Chat from './components/pages/Chat';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { io } from 'socket.io-client';
 
 function App() {
   return (
@@ -16,6 +18,9 @@ function App() {
           </Route>
           <Route exact path='/join'>
             <Join />
+          </Route>
+          <Route exact path='/:code?'>
+            <Chat />
           </Route>
         </Switch>
       </Router>
