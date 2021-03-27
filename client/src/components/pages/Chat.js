@@ -4,11 +4,14 @@ import { MessageTwoTone, LockOutlined, UserOutlined, MessageOutlined } from '@an
 import 'antd/dist/antd.css';
 import './Chat.css'
 import { useParams } from 'react-router-dom';
+import { io } from 'socket.io-client';
 
-function Chat(socket) {
+const socket = io('http://127.0.0.1:5000')
+
+function Chat() {
     let { code } = useParams();
     console.log({ code });
-
+    // const [message, setMessage] = useState('');
     return (
         <div className='container'>
             <div className='header'>
@@ -49,6 +52,7 @@ function Chat(socket) {
                             ]}
                         >
                             <Input
+                                // onChange={(e) => setMessage(e.target.value)}
                                 prefix={
                                     <MessageTwoTone
                                         className="site-form-item-icon"
@@ -73,3 +77,5 @@ function Chat(socket) {
 }
 
 export default Chat
+
+// onClick={() => socket.emit('message', { message: message, sender: localStorage.getItem('username') })}

@@ -22,7 +22,7 @@ function App() {
             <Join />
           </Route>
           <Route exact path='/:code?'>
-            <Chat socket={socket} />
+            <Chat />
           </Route>
         </Switch>
       </Router>

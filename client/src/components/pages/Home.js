@@ -12,6 +12,8 @@ function Home() {
     const [name, setName] = useState('');
     const [code, setCode] = useState('');
 
+    localStorage.setItem('username', name);
+    console.log(localStorage)
     return (
         <div className='container'>
             <div className='header'>

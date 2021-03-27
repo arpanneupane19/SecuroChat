@@ -45,6 +45,10 @@ io.on('connection', (socket) => {
 
         console.log(`${data.user} is trying to join room ${data.code}`)
     })
+
+    // socket.on('message', (data) => {
+    //     console.log(`${data.sender}: ${data.message}`)
+    // })
 })
 
 const PORT = process.env.PORT || 5000;
