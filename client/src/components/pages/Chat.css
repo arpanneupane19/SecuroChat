@@ -28,4 +28,27 @@ body {
   padding: 20px;
   width: 85%;
   background-color: white;
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+}
+
+.messages-header {
+  font-size: 1.5em;
+}
+
+.messages {
+  padding: 10px;
+  border: 1px solid lightgray;
+  height: 350px;
+}
+
+.message {
+  background-color: rgb(0, 140, 255);
+  padding: 8px;
+  color: white;
+}
+
+.message div::selection {
+  background: grey;
 }
