@@ -5,6 +5,8 @@ import Chat from './components/pages/Chat';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
+const socket = io('http://127.0.0.1:5000')
+
 function App() {
   return (
     <div>
@@ -20,7 +22,7 @@ function App() {
             <Join />
           </Route>
           <Route exact path='/:code?'>
-            <Chat />
+            <Chat socket={socket} />
           </Route>
         </Switch>
       </Router>
