@@ -5,13 +5,40 @@ import 'antd/dist/antd.css';
 import './Chat.css'
 import { useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import styled from "styled-components";
+import moment from 'moment';
 
 const socket = io('http://127.0.0.1:5000')
 
 function Chat() {
     let { code } = useParams();
     console.log({ code });
-    // const [message, setMessage] = useState('');
+    const [message, setMessage] = useState('');
+
+    socket.on('connect', () => {
+        let username = localStorage.getItem('username')
+        console.log("User has successfully connected.")
+        socket.emit('connectUser', (username));
+    })
+
+
+    const Message = styled.div`
+        background-color: rgb(0,140,255);
+        padding: 8px;
+        color: #fff;
+        border-radius: 4px;
+    `
+
+    const Time = styled.div`
+    `
+
+    const MessageBody = styled.div`
+    `
+
+    socket.on('message', (message) => {
+        console.log(`${message.message} was sent by ${message.sender} at ${message.time}.`)
+    })
+
     return (
         <div className='container'>
             <div className='header'>
@@ -24,10 +51,10 @@ function Chat() {
                 </div>
 
                 <div className='messages'>
-                    <div className='message'>
-                        <div>2:14 pm</div>
-                        <div>Arpan: Hello world!</div>
-                    </div>
+                    <Message>
+                        <Time>2:14 pm</Time>
+                        <MessageBody>Arpan: Hello world!</MessageBody>
+                    </Message>
                 </div>
 
 
@@ -52,7 +79,8 @@ function Chat() {
                             ]}
                         >
                             <Input
-                                // onChange={(e) => setMessage(e.target.value)}
+                                onChange={(e) => setMessage(e.target.value)}
+                                style={{ borderRadius: '4px' }}
                                 prefix={
                                     <MessageTwoTone
                                         className="site-form-item-icon"
@@ -64,7 +92,8 @@ function Chat() {
                         </Form.Item>
                         <Form.Item
                         >
-                            <Button style={{ width: '100%' }} type="primary" htmlType="submit">
+
+                            <Button style={{ width: '100%', borderRadius: '4px' }} type="primary" htmlType="submit" onClick={() => socket.emit('message', { message: message, sender: localStorage.getItem('username'), time: moment().format('h:mm a') })}>
                                 Send
                         </Button>
                         </Form.Item>
@@ -77,5 +106,3 @@ function Chat() {
 }
 
 export default Chat
-
-// onClick={() => socket.emit('message', { message: message, sender: localStorage.getItem('username') })}
