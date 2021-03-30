@@ -12,8 +12,6 @@ function Home() {
     const [name, setName] = useState('');
     const [code, setCode] = useState('');
 
-    localStorage.setItem('username', name);
-    console.log(localStorage)
     return (
         <div className='container'>
             <div className='header'>
@@ -40,7 +38,7 @@ function Home() {
                         ]}
                     >
                         <Input
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => setName(e.target.value) && localStorage.setItem('username', name)}
                             prefix={
                                 <UserOutlined
                                     className="site-form-item-icon"
@@ -73,7 +71,7 @@ function Home() {
                     <Form.Item
                         style={{ width: '75%', marginLeft: 'auto', marginRight: 'auto', marginTop: '8px' }}
                     >
-                        <Button style={{ width: '100%', borderRadius: '7.5px' }} type="primary" htmlType="submit" onClick={() => socket.emit('createRoom', { user: name, code: code })}>
+                        <Button style={{ width: '100%', borderRadius: '7.5px' }} type="primary" htmlType="submit" onClick={() => socket.emit('createRoom', { user: name, code: code }) && window.location.replace(`/${code}`)}>
                             Create Room
                         </Button>
                     </Form.Item>
