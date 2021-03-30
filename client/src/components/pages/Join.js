@@ -1,11 +1,41 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './Form.css'
 import { MessageTwoTone, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Form, Input, Button } from 'antd';
 import 'antd/dist/antd.css';
 import { Link } from 'react-router-dom';
+import { io } from 'socket.io-client';
+
+const socket = io('http://127.0.0.1:5000');
 
 function Join() {
+    const [name, setName] = useState('');
+    const [code, setCode] = useState('');
+    const [codeExists, setCodeExists] = useState(false);
+
+    const fetchAPI = () => {
+        fetch(`http://127.0.0.1:5000/${code}`).then(
+            res => res.json()
+        ).then(
+            data => {
+                let response = data.code;
+                if (response === 'not found') {
+                    console.log('not found')
+                    setCodeExists(false);
+                }
+
+                if (response !== 'not found') {
+                    console.log('exists')
+                    setCodeExists(true);
+                    socket.emit('joinRoom', { user: name, code: code })
+                    window.location.replace(`/${code}`);
+                }
+
+            }
+        )
+    }
+
+
     return (
         <div className='container'>
             <div className='header'>
@@ -32,6 +62,7 @@ function Join() {
                         ]}
                     >
                         <Input
+                            onChange={(e) => setName(e.target.value) && localStorage.setItem('username', name)}
                             prefix={
                                 <UserOutlined
                                     className="site-form-item-icon"
@@ -51,6 +82,7 @@ function Join() {
                         ]}
                     >
                         <Input
+                            onChange={(e) => setCode(e.target.value)}
                             prefix={
                                 <LockOutlined
                                     className="site-form-item-icon"
@@ -63,7 +95,7 @@ function Join() {
                     <Form.Item
                         style={{ width: '75%', marginLeft: 'auto', marginRight: 'auto', marginTop: '8px' }}
                     >
-                        <Button style={{ width: '100%', borderRadius: '7.5px' }} type="primary" htmlType="submit">
+                        <Button style={{ width: '100%', borderRadius: '7.5px' }} type="primary" htmlType="submit" onClick={() => fetchAPI()}>
                             Join Room
                         </Button>
                     </Form.Item>
@@ -77,3 +109,4 @@ function Join() {
 }
 
 export default Join;
+
