@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Form, Input, Button } from 'antd';
-import { MessageTwoTone, LockOutlined, UserOutlined, MessageOutlined } from '@ant-design/icons';
+import { MessageTwoTone, ArrowRightOutlined, SendOutlined, MessageOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import './Chat.css'
 import { useParams } from 'react-router-dom';
@@ -20,7 +20,6 @@ function Chat() {
         console.log("User has successfully connected.")
         socket.emit('connectUser', (username));
     })
-
 
     const Message = styled.div`
         background-color: rgb(0,140,255);
@@ -48,6 +47,7 @@ function Chat() {
             <div className='message-box'>
                 <div className='messages-header'>
                     <p>Messages <MessageOutlined /></p>
+                    <a className='leave-room' href='/'><p title='Leave Room'>Leave <ArrowRightOutlined /></p></a>
                 </div>
 
                 <div className='messages'>
@@ -93,15 +93,15 @@ function Chat() {
                         <Form.Item
                         >
 
-                            <Button style={{ width: '100%', borderRadius: '4px' }} type="primary" htmlType="submit" onClick={() => socket.emit('message', { message: message, sender: localStorage.getItem('username'), time: moment().format('h:mm a') })}>
-                                Send
-                        </Button>
+                            <Button title='Send Message' style={{ width: '100%', borderRadius: '4px' }} type="primary" htmlType="submit" onClick={() => socket.emit('message', { message: message, sender: localStorage.getItem('username'), time: moment().format('h:mm a') })}>
+                                Send <SendOutlined />
+                            </Button>
                         </Form.Item>
 
                     </Form>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 
