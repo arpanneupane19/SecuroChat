@@ -43,7 +43,6 @@ app.get('/:code', (req, res) => {
 })
 
 io.on('connection', (socket) => {
-    console.log(socket.id)
 
     socket.on('createRoom', (data) => {
         if (rooms.has(data.code)) {
@@ -83,11 +82,11 @@ io.on('connection', (socket) => {
             }
 
             socket.join(data.code)
-            socket.emit('redirect', `/${data.code}`)
+            socket.emit('redirect', `${data.code}`)
         }
 
         if (!rooms.has(data.code)) {
-            socket.emit('redirect', 'create.html')
+            socket.emit('redirect', 'create')
         }
 
         console.log(`${data.user} is trying to join room ${data.code}`)
@@ -105,24 +104,66 @@ io.on('connection', (socket) => {
             id.set(socket.id, username);
 
             if (userFound) {
-                socket.emit('botMessage', `${botName}: You've rejoined.`)
+                socket.emit('message', `${botName}: You've rejoined.`)
             }
             else {
                 // Welcome user
-                socket.emit('botMessage', `${botName}: Hello, welcome to SecuroChat!`)
-                socket.to(users.get(username)).emit("botMessage", `${username} has joined the chat.`)
+                socket.emit('message', `${botName}: Hello, welcome to SecuroChat!`)
+                socket.to(users.get(username)).emit("message", `${username} has joined the chat.`)
             }
         };
 
         // Redirects to home page if user does not have a room.
         if (!users.has(username)) {
-            socket.emit('redirect', '/create')
+            socket.emit('redirect', 'create')
 
         }
         if (username === null) {
-            socket.emit('redirect', '/join')
+            socket.emit('redirect', 'join')
         }
     })
+
+    socket.on('disconnect', (reason) => {
+        if (id.has(socket.id)) {
+            let username = id.get(socket.id)
+            let room = users.get(username)
+            let userCount = 0;
+            let arrayOfUsers = rooms.get(room);
+            // If there's multiple id's with the same username then increase the count.
+            for (let name of id.values()) {
+                if (name === username) {
+                    userCount++;
+                }
+            }
+
+            if (userCount === 1) {
+                // Send a message when a user disconnects fully
+                socket.emit('redirect', '/')
+                socket.leave(users.get(username));
+                socket.to(users.get(username)).emit('message', `${username} has left the chat.`)
+                users.delete(username);
+
+                if (arrayOfUsers.includes(username)) {
+                    let index = arrayOfUsers.indexOf(username)
+                    arrayOfUsers.splice(index, 1);
+                    console.log("Room once user leaves.", rooms)
+                }
+
+                console.log("users map", users);
+            }
+            if (arrayOfUsers.length === 0) {
+                rooms.delete(room);
+                console.log('deleted room', rooms);
+            }
+            else {
+                console.log(arrayOfUsers);
+            }
+
+            id.delete(socket.id);
+        }
+
+    })
+
 
     socket.on('message', (data) => {
         console.log(`${data.sender} sent message: ${data.message} at ${data.time}`)
