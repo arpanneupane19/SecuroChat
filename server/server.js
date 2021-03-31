@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
 
 
             if (arrayOfUsers.includes(data.user)) {
-                socket.emit('redirect', 'create.html')
+                socket.emit('redirect', 'create')
             }
 
             if (!arrayOfUsers.includes(data.user)) {
@@ -82,7 +82,6 @@ io.on('connection', (socket) => {
             }
 
             socket.join(data.code)
-            socket.emit('redirect', `${data.code}`)
         }
 
         if (!rooms.has(data.code)) {
