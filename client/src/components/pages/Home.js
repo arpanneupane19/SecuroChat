@@ -3,7 +3,7 @@ import './Form.css'
 import { MessageTwoTone, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Form, Input, Button } from 'antd';
 import 'antd/dist/antd.css';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { io } from 'socket.io-client'
 
 const socket = io('http://127.0.0.1:5000');
