@@ -46,21 +46,23 @@ io.on('connection', (socket) => {
 
     socket.on('createRoom', (data) => {
         if (rooms.has(data.code)) {
-            console.log('Room code already exists. Cannot create.')
-            socket.emit('redirect', '/join')
+            console.log('room code already exists.')
         }
 
         if (!rooms.has(data.code)) {
-            rooms.set(data.code, [data.user])
-            users.set(data.user, data.code);
-            socket.join(data.code);
-            console.log(rooms, users);
-            socket.emit('redirect', `${data.code}`)
+            if (data.code !== '' && data.user !== '') {
+                rooms.set(data.code, [data.user])
+                users.set(data.user, data.code);
+                socket.join(data.code);
+                console.log(rooms, users);
+                socket.emit('redirect', `${data.code}`)
+            }
+            if (data.code === '' || data.user === '') {
+                console.log("Username or room code field is empty. Please input.")
+            }
         }
 
-        console.log(`${data.user} is trying to join room ${data.code}`)
     })
-
 
     socket.on('joinRoom', (data) => {
         if (rooms.has(data.code)) {
@@ -82,13 +84,13 @@ io.on('connection', (socket) => {
             }
 
             socket.join(data.code)
+            socket.emit('redirect', `${data.code}`)
         }
 
         if (!rooms.has(data.code)) {
             socket.emit('redirect', 'create')
         }
 
-        console.log(`${data.user} is trying to join room ${data.code}`)
     })
 
     socket.on('connectUser', (username) => {
@@ -108,7 +110,7 @@ io.on('connection', (socket) => {
             else {
                 // Welcome user
                 socket.emit('message', `${botName}: Hello, welcome to SecuroChat!`)
-                socket.to(users.get(username)).emit("message", `${username} has joined the chat.`)
+                socket.to(users.get(username)).emit("sysMessage", `${username} has joined the chat.`)
             }
         };
 
@@ -139,7 +141,7 @@ io.on('connection', (socket) => {
                 // Send a message when a user disconnects fully
                 socket.emit('redirect', '/')
                 socket.leave(users.get(username));
-                socket.to(users.get(username)).emit('message', `${username} has left the chat.`)
+                socket.to(users.get(username)).emit('sysMessage', `${username} has left the chat.`)
                 users.delete(username);
 
                 if (arrayOfUsers.includes(username)) {
@@ -165,7 +167,13 @@ io.on('connection', (socket) => {
 
 
     socket.on('message', (data) => {
-        console.log(`${data.sender} sent message: ${data.message} at ${data.time}`)
+        socket.emit('chat', (data))
+        if (data.message !== '') {
+            console.log(`${data.sender} sent message: ${data.message} at ${data.time}`)
+        }
+        if (data.message === '') {
+            console.log('please input message!')
+        }
     })
 })
 
