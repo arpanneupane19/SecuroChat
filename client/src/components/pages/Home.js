@@ -1,16 +1,36 @@
 import React, { useState } from 'react'
 import './Form.css'
 import { MessageTwoTone, LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import 'antd/dist/antd.css';
 import { Link } from 'react-router-dom';
-import { io } from 'socket.io-client'
 
-const socket = io('http://127.0.0.1:5000');
-
-function Home() {
+function Home({ socket }) {
     const [name, setName] = useState('');
     const [code, setCode] = useState('');
+    const [codeExists, setCodeExists] = useState(false);
+
+    const fetchAPI = () => {
+        fetch(`http://127.0.0.1:5000/${code}`).then(
+            res => res.json()
+        ).then(
+            data => {
+                let response = data.code;
+                if (response === 'not found') {
+                    socket.emit('createRoom', { user: name, code: code }) && socket.on('redirect', (destination) => { window.location.replace(`/${destination}`) })
+                }
+
+                if (response !== 'not found') {
+                    console.log('exists')
+                    setCodeExists(true);
+                    message.error('Room code already exists.')
+                }
+
+            }
+        )
+    }
+
+    localStorage.setItem('username', name);
 
     return (
         <div className='container'>
@@ -38,7 +58,7 @@ function Home() {
                         ]}
                     >
                         <Input
-                            onChange={(e) => setName(e.target.value) && localStorage.setItem('username', name)}
+                            onChange={(e) => setName(e.target.value)}
                             prefix={
                                 <UserOutlined
                                     className="site-form-item-icon"
@@ -71,14 +91,14 @@ function Home() {
                     <Form.Item
                         style={{ width: '75%', marginLeft: 'auto', marginRight: 'auto', marginTop: '8px' }}
                     >
-                        <Button style={{ width: '100%', borderRadius: '7.5px' }} type="primary" htmlType="submit" onClick={() => socket.emit('createRoom', { user: name, code: code }) && window.location.replace(`/${code}`)}>
+                        <Button style={{ width: '100%', borderRadius: '7.5px' }} type="primary" htmlType="submit" onClick={() => fetchAPI()}>
                             Create Room
                         </Button>
                     </Form.Item>
                 </Form>
                 <div className='link'>
                     Need to join a room? Click <Link to='/join'>here</Link>.
-                        </div>
+                </div>
             </div>
         </div >
     )
