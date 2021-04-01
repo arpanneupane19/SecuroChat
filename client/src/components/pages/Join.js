@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import './Form.css'
 import { MessageTwoTone, LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import 'antd/dist/antd.css';
 import { Link } from 'react-router-dom';
-import { io } from 'socket.io-client';
 
-const socket = io('http://127.0.0.1:5000');
 
-function Join() {
+function Join({ socket }) {
     const [name, setName] = useState('');
     const [code, setCode] = useState('');
     const [codeExists, setCodeExists] = useState(false);
@@ -22,19 +20,19 @@ function Join() {
                 if (response === 'not found') {
                     console.log('not found')
                     setCodeExists(false);
+                    message.error('Room code does not exist.')
                 }
 
                 if (response !== 'not found') {
                     console.log('exists')
                     setCodeExists(true);
-                    socket.emit('joinRoom', { user: name, code: code })
-                    window.location.replace(`/${code}`);
+                    socket.emit('joinRoom', { user: name, code: code }) && socket.on('redirect', (destination) => { window.location.replace(`/${destination}`) })
                 }
 
             }
         )
     }
-
+    localStorage.setItem('username', name)
 
     return (
         <div className='container'>
@@ -62,7 +60,7 @@ function Join() {
                         ]}
                     >
                         <Input
-                            onChange={(e) => setName(e.target.value) && localStorage.setItem('username', name)}
+                            onChange={(e) => setName(e.target.value)}
                             prefix={
                                 <UserOutlined
                                     className="site-form-item-icon"
