@@ -13,16 +13,24 @@ function App() {
       <Router>
         <Switch>
           <Route exact path='/'>
-            <Home />
+            <Home
+              socket={socket}
+            />
           </Route>
           <Route exact path='/create'>
-            <Home />
+            <Home
+              socket={socket}
+            />
           </Route>
           <Route exact path='/join'>
-            <Join />
+            <Join
+              socket={socket}
+            />
           </Route>
           <Route exact path='/:code?'>
-            <Chat />
+            <Chat
+              socket={socket}
+            />
           </Route>
         </Switch>
       </Router>
