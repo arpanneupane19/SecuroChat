@@ -46,6 +46,16 @@ function Chat({ socket }) {
         )
     }
 
+
+    const sendMessage = () => {
+        let username = localStorage.getItem('username')
+        socket.emit('message', {
+            sender: username,
+            message: message,
+            time: moment().format("h:mm a")
+        })
+    }
+
     useEffect(() => {
         socket.on('connect', () => {
             let username = localStorage.getItem('username');
@@ -56,6 +66,22 @@ function Chat({ socket }) {
         socket.on('sysMessage', (msg) => {
             alert.info(`${msg}`)
         })
+
+        socket.on('redirect', (destination) => {
+            window.location.replace(`/${destination}`)
+        })
+
+
+        socket.on('chat', (msg) => {
+            if (msg.sender !== null && msg.message !== '') {
+                alert.success(`${msg.sender}: ${msg.message}`);
+            }
+        })
+
+        socket.on('inputMessage', () => {
+            alert.warning('Please input a message!')
+        })
+
     }, [])
 
 
@@ -68,7 +94,7 @@ function Chat({ socket }) {
             <div className='message-box'>
                 <div className='messages-header'>
                     <p>Messages <MessageOutlined /></p>
-                    <a className='leave-room' href='/'><p title='Leave Room'>Leave <ArrowRightOutlined /></p></a>
+                    <a className='leave-room' href='/' onClick={() => socket.emit('leftRoom', { code })}><p title='Leave Room'>Leave <ArrowRightOutlined /></p></a>
                 </div>
 
                 <div className='messages'>
@@ -114,7 +140,7 @@ function Chat({ socket }) {
                         <Form.Item
                         >
 
-                            <Button title='Send Message' style={{ width: '100%', borderRadius: '4px' }} type="primary" htmlType="submit" onClick={() => console.log('hi')}>
+                            <Button title='Send Message' style={{ width: '100%', borderRadius: '4px' }} type="primary" htmlType="submit" onClick={() => sendMessage()}>
                                 Send <SendOutlined />
                             </Button>
                         </Form.Item>
