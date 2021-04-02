@@ -44,8 +44,11 @@ app.get('/:code', (req, res) => {
 
 io.on('connection', (socket) => {
 
+    console.log("made connection")
+
     socket.on('createRoom', (data) => {
         if (rooms.has(data.code)) {
+            socket.emit('roomError')
             console.log('room code already exists.')
         }
 
@@ -143,7 +146,6 @@ io.on('connection', (socket) => {
                 socket.leave(users.get(username));
                 socket.to(users.get(username)).emit('sysMessage', `${username} has left the chat.`)
                 users.delete(username);
-
                 if (arrayOfUsers.includes(username)) {
                     let index = arrayOfUsers.indexOf(username)
                     arrayOfUsers.splice(index, 1);
@@ -167,12 +169,10 @@ io.on('connection', (socket) => {
 
 
     socket.on('message', (data) => {
-        socket.emit('chat', (data))
-        if (data.message !== '') {
-            console.log(`${data.sender} sent message: ${data.message} at ${data.time}`)
-        }
+        let room = users.get(data.sender);
+        io.in(room).emit('chat', (data))
         if (data.message === '') {
-            console.log('please input message!')
+            socket.emit('inputMessage')
         }
     })
 })
