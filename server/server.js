@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const moment = require('moment');
 const httpServer = require('http').createServer(app);
 var cors = require('cors');
 app.use(cors());
@@ -108,11 +109,13 @@ io.on('connection', (socket) => {
             id.set(socket.id, username);
 
             if (userFound) {
-                socket.emit('message', `${botName}: You've rejoined.`)
+                // sysAlert is for any aler that the system detects.
+                socket.emit('sysAlert', `${botName}: You've rejoined.`)
             }
             else {
                 // Welcome user
-                socket.emit('message', `${botName}: Hello, welcome to SecuroChat!`)
+                // botChat is any sort of message that the bot sends.
+                socket.emit('botChat', { sender: botName, message: `Welcome to SecuroChat ${username}! You can chat freely without worrying about privacy :)`, time: moment().format('h:mm a') })
                 socket.to(users.get(username)).emit("sysMessage", `${username} has joined the chat.`)
             }
         };
