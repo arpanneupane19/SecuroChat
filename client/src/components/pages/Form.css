@@ -33,9 +33,16 @@ body {
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.25);
 }
 
-.form > p {
+.form-header {
+  display: flex;
+  justify-content: center;
+}
+
+.form-header > p {
   font-size: 1.5em;
   text-align: center;
+  width: 90%;
+  margin-left: 10%;
 }
 
 .link {
