@@ -13,6 +13,7 @@ background-color: rgb(0,140,255);
 padding: 8px;
 color: #fff;
 border-radius: 4px;
+margin-bottom: 6px
 `
 
 const Time = styled.div`
@@ -60,7 +61,6 @@ function Chat({ socket }) {
         socket.on('connect', () => {
             let username = localStorage.getItem('username');
             socket.emit('connectUser', (username))
-            alert.success('You have connected!')
         })
 
         socket.on('sysMessage', (msg) => {
@@ -74,10 +74,15 @@ function Chat({ socket }) {
 
         socket.on('chat', (msg) => {
             if (msg.sender !== null && msg.message !== '') {
-                alert.success(`${msg.sender}: ${msg.message}`);
+                setMessages((currentMessages) => [...currentMessages, msg]) && setMessage('')
             }
         })
 
+        socket.on('botChat', (msg) => {
+            if (msg.sender !== null && msg.message !== '') {
+                setMessages((currentMessages) => [...currentMessages, msg])
+            }
+        })
         socket.on('inputMessage', () => {
             alert.warning('Please input a message!')
         })
@@ -98,10 +103,12 @@ function Chat({ socket }) {
                 </div>
 
                 <div className='messages'>
-                    <Message>
-                        <Time></Time>
-                        <MessageBody></MessageBody>
-                    </Message>
+                    {messages.map(msg =>
+                        <Message key={msg.id}>
+                            <Time>{msg.time}</Time>
+                            <MessageBody>{msg.sender}: {msg.message}</MessageBody>
+                        </Message>
+                    )}
                 </div>
 
 
