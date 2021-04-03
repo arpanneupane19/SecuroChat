@@ -24,7 +24,6 @@ const MessageBody = styled.div`
 
 function Chat({ socket }) {
     let { code } = useParams();
-    console.log({ code });
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [codeExists, setCodeExists] = useState(false);
@@ -71,10 +70,10 @@ function Chat({ socket }) {
             window.location.replace(`/${destination}`)
         })
 
-
         socket.on('chat', (msg) => {
             if (msg.sender !== null && msg.message !== '') {
-                setMessages((currentMessages) => [...currentMessages, msg]) && setMessage('')
+                setMessages((currentMessages) => [...currentMessages, msg])
+                setMessage('');
             }
         })
 
@@ -88,6 +87,7 @@ function Chat({ socket }) {
         })
 
     }, [])
+
 
 
     return (
