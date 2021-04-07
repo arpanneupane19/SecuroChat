@@ -5,36 +5,40 @@ import Chat from './components/pages/Chat';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
-const socket = io('http://127.0.0.1:5000')
+var connectionOptions = {
+  "force new connection": true,
+  "reconnectionAttempts": "Infinity",
+  "timeout": 10000,
+  "transports": ["websocket"]
+};
+const socket = io('http://127.0.0.1:5000', connectionOptions)
 
 function App() {
   return (
-    <div>
-      <Router>
-        <Switch>
-          <Route exact path='/'>
-            <Home
-              socket={socket}
-            />
-          </Route>
-          <Route exact path='/create'>
-            <Home
-              socket={socket}
-            />
-          </Route>
-          <Route exact path='/join'>
-            <Join
-              socket={socket}
-            />
-          </Route>
-          <Route exact path='/:code?'>
-            <Chat
-              socket={socket}
-            />
-          </Route>
-        </Switch>
-      </Router>
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path='/'>
+          <Home
+            socket={socket}
+          />
+        </Route>
+        <Route exact path='/create'>
+          <Home
+            socket={socket}
+          />
+        </Route>
+        <Route exact path='/join'>
+          <Join
+            socket={socket}
+          />
+        </Route>
+        <Route exact path='/:code?'>
+          <Chat
+            socket={socket}
+          />
+        </Route>
+      </Switch>
+    </Router>
   )
 }
 
