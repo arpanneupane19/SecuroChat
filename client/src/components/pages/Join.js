@@ -7,6 +7,8 @@ import { Link, Redirect } from 'react-router-dom';
 
 
 function Join({ socket }) {
+    document.title = 'SecuroChat - Join Room'
+
     const [name, setName] = useState('');
     const [code, setCode] = useState('');
     const [codeExists, setCodeExists] = useState(false);
