@@ -3,13 +3,14 @@ import './Form.css'
 import { MessageTwoTone, LockOutlined, UserOutlined, QuestionOutlined } from '@ant-design/icons';
 import { Form, Input, Button, message, Modal } from 'antd';
 import 'antd/dist/antd.css';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 function Home({ socket }) {
     const [name, setName] = useState('');
     const [code, setCode] = useState('');
     const [codeExists, setCodeExists] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [redirect, setRedirect] = useState(false);
 
     const showModal = () => {
         setVisible(true);
@@ -26,11 +27,11 @@ function Home({ socket }) {
             data => {
                 let response = data.code;
                 if (response === 'not found') {
-                    socket.emit('createRoom', { user: name, code: code }) && socket.on('redirect', (destination) => { window.location.replace(`/${destination}`) })
+                    socket.emit('createRoom', { user: name, code: code })
+                    setRedirect(true);
                 }
 
                 if (response !== 'not found') {
-                    console.log('exists')
                     setCodeExists(true);
                     message.error('Room code already exists.')
                 }
@@ -39,6 +40,10 @@ function Home({ socket }) {
     }
 
     localStorage.setItem('username', name);
+
+    if (redirect) {
+        return <Redirect to={`/${code}`} />
+    }
 
     return (
         <div className='container'>
