@@ -3,7 +3,7 @@ import './Form.css'
 import { MessageTwoTone, LockOutlined, UserOutlined, QuestionOutlined } from '@ant-design/icons';
 import { Form, Input, Button, message, Modal } from 'antd';
 import 'antd/dist/antd.css';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 
 function Join({ socket }) {
@@ -11,6 +11,7 @@ function Join({ socket }) {
     const [code, setCode] = useState('');
     const [codeExists, setCodeExists] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [redirect, setRedirect] = useState(false);
 
     const showModal = () => {
         setVisible(true);
@@ -21,28 +22,32 @@ function Join({ socket }) {
     }
 
     const fetchAPI = () => {
-        fetch(`http://127.0.0.1:5000/${code}`).then(
+        fetch(`http://localhost:5000/${code}`).then(
             res => res.json()
         ).then(
             data => {
                 let response = data.code;
                 if (response === 'not found') {
-                    console.log('not found')
                     setCodeExists(false);
                     message.error('Room code does not exist.')
                 }
 
                 if (response !== 'not found') {
-                    console.log('exists')
                     setCodeExists(true);
-                    socket.emit('joinRoom', { user: name, code: code }) && socket.on('redirect', (destination) => { window.location.replace(`/${destination}`) })
+                    socket.emit('joinRoom', { user: name, code: code })
+                    setRedirect(true);
                 }
 
             }
         )
     }
+
+
     localStorage.setItem('username', name)
 
+    if (redirect) {
+        return <Redirect to={`/${code}`} />
+    }
     return (
         <div className='container'>
             <div className='header'>
