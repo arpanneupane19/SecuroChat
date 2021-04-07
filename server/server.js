@@ -160,9 +160,6 @@ io.on('connection', (socket) => {
         }
 
     })
-    socket.on('typing', (user) => {
-        socket.to(users.get(user)).emit('sysMessage', `${user} is typing...`);
-    })
 
     socket.on('message', (data) => {
         let room = users.get(data.sender);
