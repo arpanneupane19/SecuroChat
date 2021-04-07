@@ -6,7 +6,7 @@ import './Chat.css'
 import { useParams } from 'react-router-dom';
 import styled from "styled-components";
 import moment from 'moment';
-
+import { Redirect } from 'react-router-dom';
 
 const Message = styled.div`
 background-color: rgb(0,140,255);
@@ -57,17 +57,10 @@ function Chat({ socket }) {
     }
 
     useEffect(() => {
-        socket.on('connect', () => {
-            let username = localStorage.getItem('username');
-            socket.emit('connectUser', (username))
-        })
+        socket.emit('connectUser', (localStorage.getItem('username')))
 
         socket.on('sysMessage', (msg) => {
             alert.info(`${msg}`)
-        })
-
-        socket.on('redirect', (destination) => {
-            window.location.replace(`/${destination}`)
         })
 
         socket.on('chat', (msg) => {
@@ -86,9 +79,15 @@ function Chat({ socket }) {
             alert.warning('Please input a message!')
         })
 
+        socket.on('redirect', (destination) => {
+            window.location.replace(`/${destination}`)
+        })
     }, [])
 
 
+    if (localStorage.getItem('username') === "") {
+        return <Redirect to={`/join`} />
+    }
 
     return (
         <div className='container'>
