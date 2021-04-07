@@ -24,6 +24,7 @@ const MessageBody = styled.div`
 
 function Chat({ socket }) {
     let { code } = useParams();
+    document.title = `SecuroChat - ${code}`
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [codeExists, setCodeExists] = useState(false);
@@ -82,6 +83,7 @@ function Chat({ socket }) {
         socket.on('redirect', (destination) => {
             window.location.replace(`/${destination}`)
         })
+
     }, [])
 
 
@@ -98,7 +100,7 @@ function Chat({ socket }) {
             <div className='message-box'>
                 <div className='messages-header'>
                     <p>Messages <MessageOutlined /></p>
-                    <a className='leave-room' href='/' onClick={() => socket.emit('leftRoom', { code })}><p title='Leave Room'>Leave <ArrowRightOutlined /></p></a>
+                    <a href="/"><p title='Leave Room'>Leave <ArrowRightOutlined /></p></a>
                 </div>
 
                 <div className='messages'>
