@@ -25,6 +25,7 @@ let id = new Map();
 let rooms = new Map();
 
 let codeFound = false;
+
 app.get('/:code', (req, res) => {
     if (rooms.has(req.params.code)) {
         codeFound = true;
@@ -35,12 +36,13 @@ app.get('/:code', (req, res) => {
     }
 
     if (codeFound) {
-        res.json({ code: req.params.code })
+        res.json({ code: req.params.code, users: rooms.get(req.params.code) })
     }
 
     if (!codeFound) {
         res.json({ code: 'not found' })
     }
+
 })
 
 io.on('connection', (socket) => {
@@ -59,7 +61,6 @@ io.on('connection', (socket) => {
                 users.set(data.user, data.code);
                 socket.join(data.code);
                 console.log(rooms, users);
-                socket.emit('redirect', `${data.code}`)
             }
             if (data.code === '' || data.user === '') {
                 console.log("Username or room code field is empty. Please input.")
@@ -74,7 +75,7 @@ io.on('connection', (socket) => {
 
 
             if (arrayOfUsers.includes(data.user)) {
-                socket.emit('redirect', 'create')
+                console.log('user already exists.')
             }
 
             if (!arrayOfUsers.includes(data.user)) {
@@ -86,13 +87,7 @@ io.on('connection', (socket) => {
             if (!users.has(data.user)) {
                 users.set(data.user, data.code);
             }
-
             socket.join(data.code)
-            socket.emit('redirect', `${data.code}`)
-        }
-
-        if (!rooms.has(data.code)) {
-            socket.emit('redirect', 'create')
         }
 
     })
@@ -123,10 +118,6 @@ io.on('connection', (socket) => {
         // Redirects to home page if user does not have a room.
         if (!users.has(username)) {
             socket.emit('redirect', 'create')
-
-        }
-        if (username === null) {
-            socket.emit('redirect', 'join')
         }
     })
 
@@ -169,7 +160,9 @@ io.on('connection', (socket) => {
         }
 
     })
-
+    socket.on('typing', (user) => {
+        socket.to(users.get(user)).emit('sysMessage', `${user} is typing...`);
+    })
 
     socket.on('message', (data) => {
         let room = users.get(data.sender);
