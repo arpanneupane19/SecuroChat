@@ -5,13 +5,8 @@ import Chat from './components/pages/Chat';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
-var connectionOptions = {
-  "force new connection": true,
-  "reconnectionAttempts": "Infinity",
-  "timeout": 10000,
-  "transports": ["websocket"]
-};
-const socket = io(window.location, connectionOptions)
+
+const socket = io();
 
 function App() {
   return (
