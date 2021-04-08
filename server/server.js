@@ -1,15 +1,22 @@
 const express = require('express');
 const path = require('path');
-const app = express();
 const moment = require('moment');
-const httpServer = require('http').createServer(app);
-var cors = require('cors');
+const cors = require('cors');
+
+
+// App
+const app = express();
 app.use(cors());
+
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+const httpServer = require('http').createServer(app);
 const io = require("socket.io")(httpServer, {
     cors: {
         origin: "http://localhost:3000",
-        methods: ["GET", "POST"]
-    }
+        methods: ["GET", "POST"],
+        credentials: true
+    },
 });
 
 // SecuroChat bot name
@@ -105,7 +112,7 @@ io.on('connection', (socket) => {
 
             if (userFound) {
                 // sysAlert is for any aler that the system detects.
-                socket.emit('sysAlert', `${botName}: You've rejoined.`)
+                socket.emit('sysMessage', `${botName}: You've rejoined.`)
             }
             else {
                 // Welcome user
@@ -160,6 +167,7 @@ io.on('connection', (socket) => {
         }
 
     })
+
 
     socket.on('message', (data) => {
         let room = users.get(data.sender);
