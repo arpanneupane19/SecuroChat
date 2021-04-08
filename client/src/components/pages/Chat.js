@@ -28,10 +28,11 @@ function Chat({ socket }) {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [codeExists, setCodeExists] = useState(false);
+    const [redirect, setRedirect] = useState(false);
     const [form] = Form.useForm();
 
     const fetchAPI = () => {
-        fetch(`http://127.0.0.1:5000/${code}`).then(
+        fetch(`/api/${code}`).then(
             res => res.json()
         ).then(
             data => {
@@ -82,8 +83,8 @@ function Chat({ socket }) {
             alert.warning('Please input a message!')
         })
 
-        socket.on('redirect', (destination) => {
-            window.location.replace(`/${destination}`)
+        socket.on('redirect', () => {
+            setRedirect(true)
         })
 
     }, [])
@@ -91,6 +92,10 @@ function Chat({ socket }) {
 
     if (localStorage.getItem('username') === "") {
         return <Redirect to={`/join`} />
+    }
+
+    if (redirect) {
+        return <Redirect to={`/create`} />
     }
 
     return (

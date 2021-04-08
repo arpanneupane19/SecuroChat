@@ -33,7 +33,7 @@ let rooms = new Map();
 
 let codeFound = false;
 
-app.get('/:code', (req, res) => {
+app.get('/api/:code', (req, res) => {
     if (rooms.has(req.params.code)) {
         codeFound = true;
     }
@@ -51,6 +51,10 @@ app.get('/:code', (req, res) => {
     }
 
 })
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
 
 io.on('connection', (socket) => {
 
@@ -124,7 +128,7 @@ io.on('connection', (socket) => {
 
         // Redirects to home page if user does not have a room.
         if (!users.has(username)) {
-            socket.emit('redirect', 'create')
+            socket.emit('redirect')
         }
     })
 

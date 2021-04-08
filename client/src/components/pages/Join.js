@@ -24,7 +24,7 @@ function Join({ socket }) {
     }
 
     const fetchAPI = () => {
-        fetch(`http://localhost:5000/${code}`).then(
+        fetch(`/api/${code}`).then(
             res => res.json()
         ).then(
             data => {

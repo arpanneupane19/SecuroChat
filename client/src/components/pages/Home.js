@@ -24,7 +24,7 @@ function Home({ socket }) {
     }
 
     const fetchAPI = () => {
-        fetch(`http://127.0.0.1:5000/${code}`).then(
+        fetch(`/api/${code}`).then(
             res => res.json()
         ).then(
             data => {
