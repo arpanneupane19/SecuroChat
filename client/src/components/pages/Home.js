@@ -3,7 +3,7 @@ import './Form.css'
 import { MessageTwoTone, LockOutlined, UserOutlined, QuestionOutlined } from '@ant-design/icons';
 import { Form, Input, Button, message, Modal } from 'antd';
 import 'antd/dist/antd.css';
-import { Link, Redirect, useParams } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 function Home({ socket }) {
 
