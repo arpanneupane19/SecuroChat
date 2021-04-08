@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import styled from "styled-components";
 import moment from 'moment';
 import { Redirect } from 'react-router-dom';
+import ScrollToBottom from 'react-scroll-to-bottom';
 
 const Message = styled.div`
 background-color: rgb(0,140,255);
@@ -48,8 +49,6 @@ function Chat({ socket }) {
             }
         )
     }
-
-
     const sendMessage = () => {
         let username = localStorage.getItem('username')
         socket.emit('message', {
@@ -57,7 +56,10 @@ function Chat({ socket }) {
             message: message,
             time: moment().format("h:mm a")
         })
-        form.resetFields();
+
+        form.setFieldsValue({
+            message: ''
+        });
     }
 
     useEffect(() => {
@@ -110,14 +112,14 @@ function Chat({ socket }) {
                     <a href="/"><p title='Leave Room'>Leave <ArrowRightOutlined /></p></a>
                 </div>
 
-                <div className='messages'>
+                <ScrollToBottom className='messages'>
                     {messages.map(msg =>
                         <Message key={msg.id}>
                             <Time>{msg.time}</Time>
                             <MessageBody>{msg.sender}: {msg.message}</MessageBody>
                         </Message>
                     )}
-                </div>
+                </ScrollToBottom>
 
 
                 <div className='message-form'>
@@ -161,6 +163,8 @@ function Chat({ socket }) {
         </div >
     )
 }
+
+
 
 
 
