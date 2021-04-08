@@ -28,6 +28,7 @@ function Chat({ socket }) {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [codeExists, setCodeExists] = useState(false);
+    const [form] = Form.useForm();
 
     const fetchAPI = () => {
         fetch(`http://127.0.0.1:5000/${code}`).then(
@@ -55,6 +56,7 @@ function Chat({ socket }) {
             message: message,
             time: moment().format("h:mm a")
         })
+        form.resetFields();
     }
 
     useEffect(() => {
@@ -115,6 +117,7 @@ function Chat({ socket }) {
 
                 <div className='message-form'>
                     <Form
+                        form={form}
                         style={{ marginTop: '20px', display: 'flex' }}
                         name="basic"
                         initialValues={{
@@ -126,12 +129,6 @@ function Chat({ socket }) {
                             placeholder="Message"
                             name="message"
                             style={{ textAlign: 'left !important', marginRight: '8px' }}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your message!',
-                                },
-                            ]}
                         >
                             <Input
                                 onChange={(e) => setMessage(e.target.value)}
