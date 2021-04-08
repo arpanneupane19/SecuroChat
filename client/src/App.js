@@ -11,7 +11,7 @@ var connectionOptions = {
   "timeout": 10000,
   "transports": ["websocket"]
 };
-const socket = io('http://127.0.0.1:5000', connectionOptions)
+const socket = io(window.location, connectionOptions)
 
 function App() {
   return (
