@@ -37,14 +37,12 @@ function Join({ socket }) {
 
                 if (response !== 'not found') {
                     setCodeExists(true);
-                    for (let i = 0; i < usersArr.length; i++) {
-                        if (usersArr[i] === name) {
-                            message.error('User with that username already exists.')
-                        }
-                        if (usersArr[i] !== name) {
-                            socket.emit('joinRoom', { user: name, code: code })
-                            setRedirect(true);
-                        }
+                    if (usersArr.indexOf(name) !== -1) {
+                        message.error("User with that name already exists.")
+                    }
+                    else {
+                        socket.emit('joinRoom', { user: name, code: code })
+                        setRedirect(true);
                     }
                 }
 
