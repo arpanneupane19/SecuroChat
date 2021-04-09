@@ -92,13 +92,13 @@ io.on('connection', (socket) => {
             if (!arrayOfUsers.includes(data.user)) {
                 arrayOfUsers.push(data.user);
                 rooms.set(data.code, arrayOfUsers);
+                socket.join(data.code)
                 console.log(rooms);
             }
 
             if (!users.has(data.user)) {
                 users.set(data.user, data.code);
             }
-            socket.join(data.code)
         }
 
     })
