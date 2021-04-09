@@ -31,6 +31,9 @@ let id = new Map();
 // map rooms to the users inside
 let rooms = new Map();
 
+// map id to [username, user room]
+let roomsID = new Map();
+
 let codeFound = false;
 
 app.get('/api/:code', (req, res) => {
@@ -107,12 +110,15 @@ io.on('connection', (socket) => {
         if (users.has(username)) {
             socket.join(users.get(username))
             let userFound = false;
-            for (let name of id.values()) {
-                if (name === username) {
+
+            for (let info of roomsID.values()) {
+                if (info[0] === username && info[1] === users.get(username)) {
                     userFound = true;
                 }
             }
             id.set(socket.id, username);
+            roomsID.set(socket.id, [username, users.get(username)])
+            console.log(roomsID)
 
             if (userFound) {
                 // sysAlert is for any aler that the system detects.
@@ -138,6 +144,7 @@ io.on('connection', (socket) => {
             let room = users.get(username)
             let userCount = 0;
             let arrayOfUsers = rooms.get(room);
+            // let info = roomsID.get(socket.id);
             // If there's multiple id's with the same username then increase the count.
             for (let name of id.values()) {
                 if (name === username) {
@@ -157,17 +164,20 @@ io.on('connection', (socket) => {
                     console.log("Room once user leaves.", rooms)
                 }
 
-                console.log("users map", users);
+                console.log("Users map", users);
             }
             if (arrayOfUsers.length === 0) {
                 rooms.delete(room);
-                console.log('deleted room', rooms);
+                console.log('Deleted room', rooms);
             }
             else {
                 console.log(arrayOfUsers);
             }
 
             id.delete(socket.id);
+            console.log(id)
+            roomsID.delete(socket.id)
+            console.log(roomsID)
         }
 
     })
