@@ -29,6 +29,7 @@ function Join({ socket }) {
         ).then(
             data => {
                 let response = data.code;
+                let usersArr = data.users;
                 if (response === 'not found') {
                     setCodeExists(false);
                     message.error('Room code does not exist.')
@@ -36,14 +37,20 @@ function Join({ socket }) {
 
                 if (response !== 'not found') {
                     setCodeExists(true);
-                    socket.emit('joinRoom', { user: name, code: code })
-                    setRedirect(true);
+                    for (let i = 0; i < usersArr.length; i++) {
+                        if (usersArr[i] === name) {
+                            message.error('User with that username already exists.')
+                        }
+                        if (usersArr[i] !== name) {
+                            socket.emit('joinRoom', { user: name, code: code })
+                            setRedirect(true);
+                        }
+                    }
                 }
 
             }
         )
     }
-
 
     localStorage.setItem('username', name)
 
