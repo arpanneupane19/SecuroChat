@@ -119,6 +119,7 @@ io.on('connection', (socket) => {
             id.set(socket.id, username);
             roomsID.set(socket.id, [username, users.get(username)])
             console.log(roomsID)
+            let arrayOfUsers = rooms.get(users.get(username));
 
             if (userFound) {
                 // sysAlert is for any aler that the system detects.
@@ -129,6 +130,7 @@ io.on('connection', (socket) => {
                 // botChat is any sort of message that the bot sends.
                 socket.emit('botChat', { sender: botName, message: `Welcome to SecuroChat ${username}! You can chat freely without worrying about privacy :)`, time: moment().format('h:mm a') })
                 socket.to(users.get(username)).emit("sysMessage", `${username} has joined the chat.`)
+                io.to(users.get(username)).emit('joined', arrayOfUsers)
             }
         };
 
@@ -157,6 +159,7 @@ io.on('connection', (socket) => {
                 socket.emit('redirect', '/')
                 socket.leave(users.get(username));
                 socket.to(users.get(username)).emit('sysMessage', `${username} has left the chat.`)
+                io.to(users.get(username)).emit('left', arrayOfUsers)
                 users.delete(username);
                 if (arrayOfUsers.includes(username)) {
                     let index = arrayOfUsers.indexOf(username)
