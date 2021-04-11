@@ -61,7 +61,7 @@ function Home({ socket }) {
                         footer={[
                             <Button type="primary" key="back" onClick={closeModal}>
                                 OK
-                            </Button>,
+                            </Button>
                         ]}
                     >
                         <p>
@@ -137,7 +137,7 @@ function Home({ socket }) {
                     Need to join a room? Click <Link to='/join'>here</Link>.
                 </div>
             </div>
-        </div >
+        </ div >
     )
 }
 
