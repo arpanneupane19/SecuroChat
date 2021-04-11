@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Input, Button, message as alert } from 'antd';
-import { MessageTwoTone, ArrowRightOutlined, SendOutlined, MessageOutlined } from '@ant-design/icons';
+import { MessageTwoTone, ArrowRightOutlined, SendOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import './Chat.css'
 import { useParams } from 'react-router-dom';
@@ -30,6 +30,7 @@ function Chat({ socket }) {
     const [messages, setMessages] = useState([]);
     const [codeExists, setCodeExists] = useState(false);
     const [redirect, setRedirect] = useState(false);
+    const [userTotal, setUserTotal] = useState(0);
     const [form] = Form.useForm();
 
     const fetchAPI = () => {
@@ -89,6 +90,16 @@ function Chat({ socket }) {
             setRedirect(true)
         })
 
+
+        // set user total when joining/leaving
+        socket.on('joined', (arr) => {
+            setUserTotal(arr.length);
+        })
+
+        socket.on('left', (arr) => {
+            setUserTotal(arr.length - 1);
+        })
+
     }, [])
 
 
@@ -109,6 +120,7 @@ function Chat({ socket }) {
             <div className='message-box'>
                 <div className='messages-header'>
                     <p>Messages <MessageOutlined /></p>
+                    <p><UserOutlined /> {userTotal}</p>
                     <a href="/"><p title='Leave Room'>Leave <ArrowRightOutlined /></p></a>
                 </div>
 
