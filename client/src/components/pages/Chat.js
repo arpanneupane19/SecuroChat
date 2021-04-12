@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, Button, message as alert } from 'antd';
+import { Form, Input, Button, message as alert, Modal } from 'antd';
 import { MessageTwoTone, ArrowRightOutlined, SendOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import './Chat.css'
@@ -28,28 +28,12 @@ function Chat({ socket }) {
     document.title = `SecuroChat - ${code}`
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
-    const [codeExists, setCodeExists] = useState(false);
+    const [visible, setVisible] = useState(false);
     const [redirect, setRedirect] = useState(false);
     const [userTotal, setUserTotal] = useState(0);
+    const [usersArr, setUsersArr] = useState([])
     const [form] = Form.useForm();
 
-    const fetchAPI = () => {
-        fetch(`/api/${code}`).then(
-            res => res.json()
-        ).then(
-            data => {
-                let response = data.code;
-                if (response === 'not found') {
-                    setCodeExists(false);
-                }
-
-                if (response !== 'not found') {
-                    setCodeExists(true);
-                }
-
-            }
-        )
-    }
     const sendMessage = () => {
         let username = localStorage.getItem('username')
         socket.emit('message', {
@@ -63,6 +47,14 @@ function Chat({ socket }) {
         });
     }
 
+    const showModal = () => {
+        setVisible(true);
+    }
+
+    const closeModal = () => {
+        setVisible(false);
+    }
+
     useEffect(() => {
         socket.emit('connectUser', (localStorage.getItem('username')))
 
@@ -74,12 +66,13 @@ function Chat({ socket }) {
             if (msg.sender !== null && msg.message !== '') {
                 setMessages((currentMessages) => [...currentMessages, msg])
                 setMessage('');
+                console.log(messages);
             }
         })
 
         socket.on('botChat', (msg) => {
             if (msg.sender !== null && msg.message !== '') {
-                setMessages((currentMessages) => [...currentMessages, msg])
+                setMessages(currentMessages => [...currentMessages, msg])
             }
         })
         socket.on('inputMessage', () => {
@@ -94,10 +87,14 @@ function Chat({ socket }) {
         // set user total when joining/leaving
         socket.on('joined', (arr) => {
             setUserTotal(arr.length);
+            setUsersArr(arr)
         })
 
-        socket.on('left', (arr) => {
-            setUserTotal(arr.length - 1);
+        socket.on('left', (arr, username) => {
+            let index = arr.indexOf(username);
+            arr.splice(index, 1);
+            setUsersArr(arr)
+            setUserTotal(arr.length);
         })
 
     }, [])
@@ -120,7 +117,21 @@ function Chat({ socket }) {
             <div className='message-box'>
                 <div className='messages-header'>
                     <p>Messages <MessageOutlined /></p>
-                    <p><UserOutlined /> {userTotal}</p>
+                    <p style={{ cursor: 'pointer' }} onClick={() => showModal()}><UserOutlined /> {userTotal}</p>
+                    <Modal title="Users In Room" visible={visible} onOk={closeModal} onCancel={closeModal}
+                        footer={[
+                            <Button type="primary" key="back" onClick={closeModal}>
+                                Close
+                            </Button>
+                        ]}
+                    >
+                        <UserOutlined /> {userTotal}<br></br><br></br>
+                        {usersArr.map(user =>
+                            <div key={user.id}>
+                                <p>{user}</p>
+                            </div>
+                        )}
+                    </Modal>
                     <a href="/"><p title='Leave Room'>Leave <ArrowRightOutlined /></p></a>
                 </div>
 
