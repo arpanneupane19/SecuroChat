@@ -159,7 +159,7 @@ io.on('connection', (socket) => {
                 socket.emit('redirect', '/')
                 socket.leave(users.get(username));
                 socket.to(users.get(username)).emit('sysMessage', `${username} has left the chat.`)
-                io.to(users.get(username)).emit('left', arrayOfUsers)
+                io.to(users.get(username)).emit('left', arrayOfUsers, username)
                 users.delete(username);
                 if (arrayOfUsers.includes(username)) {
                     let index = arrayOfUsers.indexOf(username)
