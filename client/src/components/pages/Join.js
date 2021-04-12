@@ -68,7 +68,7 @@ function Join({ socket }) {
                         footer={[
                             <Button type="primary" key="back" onClick={closeModal}>
                                 OK
-                            </Button>,
+                            </Button>
                         ]}
                     >
                         <p>
