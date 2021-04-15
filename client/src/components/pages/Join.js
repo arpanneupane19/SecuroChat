@@ -40,6 +40,9 @@ function Join({ socket }) {
                     if (usersArr.indexOf(name) !== -1) {
                         message.error("User with that name already exists.")
                     }
+                    if (code === name) {
+                        message.error("Your name cannot be the same as the room code.")
+                    }
                     else {
                         socket.emit('joinRoom', { user: name, code: code })
                         setRedirect(true);
