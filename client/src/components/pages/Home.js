@@ -29,9 +29,13 @@ function Home({ socket }) {
         ).then(
             data => {
                 let response = data.code;
-                if (response === 'not found') {
+                if (response === 'not found' && name !== code) {
                     socket.emit('createRoom', { user: name, code: code })
                     setRedirect(true);
+                }
+
+                if (name === code) {
+                    message.error("Your name cannot be the same as the room code.")
                 }
 
                 if (response !== 'not found') {
