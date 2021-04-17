@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 
 app.use(express.static(path.join(__dirname, '../client/build')));
-app.use(enforce.HTTPS());
+app.use(enforce.HTTPS({ trustProtoHeader: true }));
 
 const httpServer = require('http').createServer(app);
 const io = require("socket.io")(httpServer, {
