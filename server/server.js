@@ -2,15 +2,14 @@ const express = require('express');
 const path = require('path');
 const moment = require('moment');
 const cors = require('cors');
-const enforce = require('express-sslify');
+const sslRedirect = require('heroku-ssl-redirect');
 
 // App
 const app = express();
 app.use(cors());
+app.use(sslRedirect());
 
 app.use(express.static(path.join(__dirname, '../client/build')));
-app.use(enforce.HTTPS({ trustProtoHeader: true }));
-
 const httpServer = require('http').createServer(app);
 const io = require("socket.io")(httpServer, {
     cors: {
