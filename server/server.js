@@ -7,7 +7,7 @@ const sslRedirect = require('heroku-ssl-redirect');
 // App
 const app = express();
 app.use(cors());
-app.use(sslRedirect());
+app.use(sslRedirect);
 
 app.use(express.static(path.join(__dirname, '../client/build')));
 const httpServer = require('http').createServer(app);
