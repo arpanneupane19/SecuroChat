@@ -99,7 +99,7 @@ function Home({ socket }) {
                         ]}
                     >
                         <Input
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => setName(e.target.value.trim())}
                             prefix={
                                 <UserOutlined
                                     className="site-form-item-icon"
@@ -119,7 +119,7 @@ function Home({ socket }) {
                         ]}
                     >
                         <Input
-                            onChange={(e) => setCode(e.target.value)}
+                            onChange={(e) => setCode(e.target.value.trim())}
                             prefix={
                                 <LockOutlined
                                     className="site-form-item-icon"
