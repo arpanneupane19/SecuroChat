@@ -30,7 +30,6 @@ function Chat({ socket }) {
     const [messages, setMessages] = useState([]);
     const [visible, setVisible] = useState(false);
     const [redirect, setRedirect] = useState(false);
-    const [userTotal, setUserTotal] = useState(0);
     const [usersArr, setUsersArr] = useState([])
     const [form] = Form.useForm();
 
@@ -86,15 +85,17 @@ function Chat({ socket }) {
 
         // set user total when joining/leaving
         socket.on('joined', (arr) => {
-            setUserTotal(arr.length);
+            localStorage.setItem("userTotal", arr.length);
             setUsersArr(arr)
         })
 
         socket.on('left', (arr, username) => {
             let index = arr.indexOf(username);
             arr.splice(index, 1);
+            localStorage.setItem("userTotal", arr.length);
             setUsersArr(arr)
-            setUserTotal(arr.length);
+
+
         })
 
     }, [])
@@ -117,7 +118,7 @@ function Chat({ socket }) {
             <div className='message-box'>
                 <div className='messages-header'>
                     <p>Messages <MessageOutlined /></p>
-                    <p style={{ cursor: 'pointer' }} onClick={() => showModal()}><UserOutlined /> {userTotal}</p>
+                    <p style={{ cursor: 'pointer' }} onClick={() => showModal()}><UserOutlined /> {localStorage.getItem('userTotal')}</p>
                     <Modal title="Users In Room" visible={visible} onOk={closeModal} onCancel={closeModal}
                         footer={[
                             <Button type="primary" key="back" onClick={closeModal}>
@@ -125,7 +126,7 @@ function Chat({ socket }) {
                             </Button>
                         ]}
                     >
-                        <UserOutlined /> {userTotal}<br></br><br></br>
+                        <UserOutlined /> {localStorage.getItem('userTotal')}<br></br><br></br>
                         {usersArr.map(user =>
                             <div key={user.id}>
                                 <p>{user}</p>
