@@ -122,8 +122,9 @@ io.on('connection', (socket) => {
             let arrayOfUsers = rooms.get(users.get(username));
 
             if (userFound) {
-                // sysAlert is for any aler that the system detects.
+                // sysAlert is for any alert that the system detects.
                 socket.emit('sysMessage', `${botName}: You've rejoined.`)
+                io.to(users.get(username)).emit('joined', arrayOfUsers)
             }
             else {
                 // Welcome user
@@ -146,7 +147,6 @@ io.on('connection', (socket) => {
             let room = users.get(username)
             let userCount = 0;
             let arrayOfUsers = rooms.get(room);
-            // let info = roomsID.get(socket.id);
             // If there's multiple id's with the same username then increase the count.
             for (let name of id.values()) {
                 if (name === username) {
